@@ -1,0 +1,50 @@
+define exp(x) { return e(x); }
+define log(x) { return l(x); }
+define log10(x) { return l(x)/l(10); }
+define loga(x, a) { return l(x)/l(a); }
+define pow(x, n) { return e(n*log(x)); }
+define sinh(x) { return 0.5*(e(x) - e(-x)); }
+define cosh(x) { return 0.5*(e(x) + e(-x)); }
+define tanh(x) {
+  auto exp2x;
+  exp2x = e(2*x);
+  return (exp2x - 1)/(exp2x + 1);
+}
+define sech(x) { return 1/cosh(x); }
+define csch(x) { return 1/sinh(x); }
+define coth(x) { return 1/tanh(x); }
+
+define asinh(x) { return l(x + sqrt(x^2 + 1)); }
+define acosh(x) {
+  if(x^2 < 1) {
+    print "Error: acos of a number smaller than 1.\n";
+    return 1/0;
+  }
+  return l(x + sqrt(x^2 - 1));
+}
+define atanh(x) {
+  if(x^2 >= 1) {
+    print "Error: atanh of a number outside the range (-1, 1).\n";
+    return 1/0;
+  }
+  return 0.5*l((1 + x)/(1 - x));
+}
+define asech(x) {
+  auto invx;
+  invx = 1/x;
+  if(invx <= 0 || invx > 1) {
+    print "Error: asech of a number outside the range (0, 1].\n";
+    return 1/0;
+  }
+  return acosh(invx);
+}
+define acsch(x) { return asinh(1/x); }
+define acoth(x) {
+  auto invx;
+  invx = 1/x;
+  if(invx^2 <= 1) {
+    print "Error: acoth of a number inside the range [-1, 1].\n";
+    return 1/0;
+  }
+  return atanh(invx);
+}

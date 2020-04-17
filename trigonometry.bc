@@ -3,8 +3,9 @@ define sin(x) { return s(x); }
 define cos(x) { return c(x); }
 define tan(x) { return s(x)/c(x); }
 define sec(x) { return 1/c(x); }
-define cosec(x) { return 1/s(x); }
-define cotan(x) { return c(x)/s(x); }
+define csc(x) { return 1/s(x); }
+define cot(x) { return c(x)/s(x); }
+
 define asin(x) { return a(x/sqrt(1 - x^2)); }
 define acos(x) { return a(sqrt(1 - x^2)/a); }
 define atan(x) { return a(x); }
@@ -16,7 +17,7 @@ define atan2(x, y) {
       return -pi/2.0;
     } else {
       print "Error: atan2(0,0) undefined.\n";
-      return 0;
+      return 1/0;
     }
   } else if(x > 0){
     if(y >= 0) {
@@ -28,3 +29,6 @@ define atan2(x, y) {
     return a(y/x) + pi;
   }
 }
+define asec(x) { return acos(1/x); }
+define acsc(x) { return asin(1/x); }
+define acot(x) { return atan(1/x); }

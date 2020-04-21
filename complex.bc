@@ -7,36 +7,37 @@
  Complex number arithmetic.
 
  Represent a complex number a + bi with an array,
- z[0] = a y z[1] = b.
+
+   z[0] = a; z[1] = b;
 
  complex.bc depends on the exponential, logarithmic
- and trigonometric functions, so run it with the -l
+ and trigonometric functions, so run bc with the -l
  option.
 
  Total and partial reproduction and modification of
  this code are allowed. No warranties. */
 
 /* Print the complex number z as a + bi */
-
 define printz(z[]) {
-  print z[0], " + ", z[1], "i\n";
+  if(z[1] >= 0) {
+    print z[0], " + ", z[1], "i\n";
+  } else {
+    print z[0], " - ", -z[1], "i\n";
+  }
   return 0;
 }
 
 /*  Real part of z  */
-
 define rez(z[]) {
   return z[0];
 }
 
 /*  Imaginary part of z  */
-
 define imz(z[]) {
   return z[1];
 }
 
 /*  Add two complex numbers z1 + z2 = z3  */
-
 define addz(z1[], z2[], *z3[]) {
   z3[0] = z1[0] + z2[0];
   z3[1] = z1[1] + z2[1];
@@ -44,7 +45,6 @@ define addz(z1[], z2[], *z3[]) {
 }
 
 /*  Subtract z2 from z1, z1 - z2 = z3 */
-
 define subtz(z1[], z2[], *z3[]) {
   z3[0] = z1[0] - z2[0];
   z3[1] = z1[1] - z2[1];
@@ -52,7 +52,6 @@ define subtz(z1[], z2[], *z3[]) {
 }
 
 /*  Product of z1 and z2  */
-
 define prodz(z1[], z2[], *z3[]) {
   z3[0] = z1[0]*z2[0] - z1[1]*z2[1];
   z3[1] = z1[0]*z2[1] + z2[0]*z1[1];
@@ -60,7 +59,6 @@ define prodz(z1[], z2[], *z3[]) {
 }
 
 /*  Divide z1 by z2  */
-
 define divz(z1[], z2[], *z3[]) {
   z3[0] = (z1[0]*z2[0] + z1[1]*z2[1])/(z2[0]^2 + z2[1]^2);
   z3[1] = (z1[1]*z2[0] - z1[0]*z2[1])/(z2[0]^2 + z2[1]^2);
@@ -68,7 +66,6 @@ define divz(z1[], z2[], *z3[]) {
 }
 
 /*  Conjugate of z  */
-
 define conj(z[], *zconj[]) {
   zconj[0] = z[0];
   zconj[1] = -z[1];
@@ -76,33 +73,35 @@ define conj(z[], *zconj[]) {
 }
 
 /*  Modulus of z  */
-
 define modz(z[]) {
   return sqrt(z[0]^2 + z[1]^2);
 }
 
 /*  Argument of z. */
-
-pi = 4*a(1);
-
 define argz(z[]) {
-  if(z[0] == 0)
-  {
-    if(z[1] == 0)
-      print "Error: Argumento no definido\n";
-    if(z[1] > 0)
-      return pi/2;
-    if(z[1] < 0)
-      return -pi/2;
-  }
-  if(z[0] > 0)
+  auto pi = 4*a(1);
+
+  if(z[0] == 0) {
+    if(z[1] > 0) {
+      return pi/2.0;
+    } else if(z[1] < 0) {
+      return -pi/2.0;
+    } else {
+      print "Error: argument undefined.\n";
+      return 1/0;
+    }
+  } else if(z[0] > 0){
     return a(z[1]/z[0]);
-  if(z[0] < 0)
-    return pi + a(z[1]/z[0]);
+  } else {
+    if(z[1] >= 0) {
+      return a(z[1]/z[0]) + pi;
+    } else {
+      return a(z[1]/z[0]) - pi;
+    }
+  }
 }
 
 /*  Print a complex number in trigonometric form */
-
 define printzt(z[]) {
   auto argument;
   argument = argz(z[]);
@@ -113,7 +112,6 @@ define printzt(z[]) {
 
 /*  Integer part of a real number, used in the function
     pow(x,y) below.  */
-
 define int(x) {
   auto s;
   s = scale;
@@ -124,7 +122,6 @@ define int(x) {
 }
 
 /*  Power function x^y with x and y arbitrary real numbers */
-
 define pow(x, y) {
   if(int(y) == y)
     return x^y;
@@ -136,7 +133,6 @@ define pow(x, y) {
     z^(1/n) calculates the first nth root, to obtain
     the remaining roots simply multiply by
     exp(2*k*pi/n), with k = 1, 2, 3, ..., n - 1.  */
-
 define powz(z[], x, *zpowx[]) {
   auto modulus, argument;
   modulus = modz(z[]);
@@ -147,7 +143,6 @@ define powz(z[], x, *zpowx[]) {
 }
 
 /*  The n nth roots of complex number z (integer n) */
-
 define rootsz(z[], n) {
   auto root[], modulus, argument, modroot, k;
   modulus = modz(z[]);
@@ -170,7 +165,6 @@ define rootsz(z[], n) {
 
     exp(a) * exp(ib) = exp(a) * (cos(b) + i sin(b))
 */
-
 define expz(z[], *exp_z[]) {
   exp_z[0] = e(z[0])*c(z[1]);
   exp_z[1] = e(z[0])*s(z[1]);
@@ -178,13 +172,21 @@ define expz(z[], *exp_z[]) {
 }
 
 /*  Logarithm of a complex number  */
-
 define logz(z[], *log_z[]) {
   auto modulus, argument;
   modulus = modz(z[]);
   argument = argz(z[]);
   log_z[0] = l(modulus);
   log_z[1] = argument;
+  return 0;
+}
+
+/*  z1^z2 = exp(z2 Ln(z1))  */
+define powzz(z1[], z2[], *z1powz2[]) {
+  auto logz1[], z2logz1[];
+  . = logz(z1[], logz1[]);
+  . = prodz(z2[],logz1[], z2logz1[]);
+  . = expz(z2logz1[], z1powz2[]);
   return 0;
 }
 
@@ -195,7 +197,6 @@ define logz(z[], *log_z[]) {
     Partial results are stored in temporary variables
     to make the code easier to read (expmiz[] stores
     the value of exp(-iz), for example).  */
-
 define sinz(z[], *sin_z[]) {
   auto iz[], miz[], expiz[], expmiz[];
   iz[0] = -z[1];
@@ -212,7 +213,6 @@ define sinz(z[], *sin_z[]) {
 /*  Cosine of z
 
     cos(z) = 1/2 (exp(iz) + exp(-iz))  */
-
 define cosz(z[], *cos_z[]) {
   auto iz[], miz[], expiz[], expmiz[];
   iz[0] = -z[1];
@@ -226,18 +226,15 @@ define cosz(z[], *cos_z[]) {
   return 0;
 }
 
-/*  z1^z2 = exp(z2 Ln(z1))  */
-
-define powzz(z1[], z2[], *z1potz2[]) {
-  auto logz1[], z2logz1[];
-  . = logz(z1[], logz1[]);
-  . = prodz(z2[],logz1[], z2logz1[]);
-  . = expz(z2logz1[], z1potz2[]);
-  return 0;
+/* Tangent of z */
+define tanz(z[], *tan_z[]) {
+  auto sin_z, cos_z;
+  . = sinz(z[], sin_z[]);
+  . = cosz(z[], cos_z[]);
+  . = divz(sin_z[], cos_z[], tan_z[]);
 }
 
 /* Hyperbolic functions */
-
 define sinhz(z[], *sinh_z[]) {
   auto mz[], exp_z[], exp_mz[];
   mz[0] = -z[0]; mz[1] = -z[1];

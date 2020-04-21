@@ -2,7 +2,27 @@ define exp(x) { return e(x); }
 define log(x) { return l(x); }
 define log10(x) { return l(x)/l(10); }
 define loga(x, a) { return l(x)/l(a); }
-define pow(x, n) { return e(n*log(x)); }
+
+/*  Integer part of a real number, used in the function
+    pow(x,y) below.  */
+define int(x) {
+  auto s;
+  s = scale;
+  scale = 0;
+  x /= 1;
+  scale = s;
+  return x;
+}
+
+/*  Power function x^y with x and y arbitrary real numbers */
+define pow(x, y) {
+  if(int(y) == y) {
+    return x^y;
+  } else {
+    return e(y*l(x));
+  }
+}
+
 define sinh(x) { return 0.5*(e(x) - e(-x)); }
 define cosh(x) { return 0.5*(e(x) + e(-x)); }
 define tanh(x) {

@@ -10,6 +10,7 @@ define asin(x) { return a(x/sqrt(1 - x^2)); }
 define acos(x) { return a(sqrt(1 - x^2)/a); }
 define atan(x) { return a(x); }
 define atan2(x, y) {
+  auto pi = 4*a(1);
   if(x == 0) {
     if(y > 0) {
       return pi/2.0;
@@ -20,13 +21,13 @@ define atan2(x, y) {
       return 1/0;
     }
   } else if(x > 0){
-    if(y >= 0) {
-      return a(y/x);
-    } else {
-      return 2*pi + a(y/x);
-    }
+    return a(y/x);
   } else {
-    return a(y/x) + pi;
+    if(y >= 0) {
+      return a(y/x) + pi;
+    } else {
+      return a(y/x) - pi;
+    }
   }
 }
 define asec(x) { return acos(1/x); }

@@ -2,10 +2,14 @@
 
 Mathematical functions for the GNU bc command-line calculator.
 
-## List of functions
+## General functions
 
-The functions below depend on the bult-in sine, cosine, exponential
-and logarithmic functions, so execute ``bc`` with the ``-l`` option.
+The functions below depend on the bult-in sine, cosine, exponential and
+logarithmic functions, so execute ``bc`` with the ``-l`` option. To add
+functions simply add them to the command line when you run ``bc``. For
+example,
+
+  bc -l trigonometry.bc exponential.bc
 
 ### trigonometry.bc
 
@@ -51,7 +55,7 @@ Exponentials, logarithms, powers and hyperbolic functions.
 
 Complex number arithmetic.
 
-Represent a complex number a + bi with an array,
+Represent a complex number *a* + *b*i with an array,
 
 	z[0] = a; z[1] = b;
 
@@ -81,3 +85,28 @@ stored in the variable ``z1powz2[]``.
 of ``z[]``, stored in the ``sin_z[]``, ``cos_z[]`` and ``tan_z[]`` variables, respectively.
 * ``sinhz(z[], sinh_z[])``, ``coshz(z[], cosh_z[])``, ``tanhz(z[], tanh_z[])``: sine, cosine and tangent
 of ``z[]``, stored in the ``sinh_z[]``, ``cosh_z[]`` and ``tanh_z[]`` variables, respectively.
+
+### calculus.bc
+
+Simple numerical derivatives and integrals. Set ``generic_f`` equal to the
+function of interest before calculating derivatives or integrals. For example,
+to calculate the derivative of ``x^2`` at ``x = 1`` with step size 0.01:
+
+	define generic_f(x) { return x^2; } diff(1, 0.01);
+
+If you wish to do several operations with the same generic function, you do
+not need to redefine it again. Here is an example to compare the precision of
+Euler's integration algorithm to Simpson's:
+
+	define generic_f(x) { return x^2; } eul = integral(0, 1, 0.001);
+        sim = simpson(0, 1, 0.001);
+        print "Error:\n  Euler = ", 3*(1/3.0 - eul), " %\n  Simpson = ", 3*(1/3.0 - sim), " %\n";
+
+* ``diff(x, dx)``: Derivative of ``generic_f`` at point ``x`` with numerical
+step size ``dx``.
+* ``diffn(x, dx)``: Nth derivative of ``generic_f`` at point ``x`` with
+numerical step size ``dx``.
+* ``integral(a, b, dx)``: Integral of ``generic_f`` from ``a`` to ``b`` with
+numerical step size ``dx`` using Euler's algorithm.
+* ``simpson(a, b, dx)``: Integral of ``generic_f`` from ``a`` to ``b`` with 
+numerical step size ``dx`` using Simpson's algorithm.

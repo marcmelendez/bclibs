@@ -57,7 +57,9 @@ Complex number arithmetic.
 
 Represent a complex number *a* + *b*i with an array,
 
-	z[0] = a; z[1] = b;
+```
+z[0] = a; z[1] = b;
+```
 
 ``bc`` cannot return arrays from a function, so the return variable is given to
 the function as an argument when it is a complex number. Supress output with
@@ -92,15 +94,19 @@ Simple numerical derivatives and integrals. Set ``generic_f`` equal to the
 function of interest before calculating derivatives or integrals. For example,
 to calculate the derivative of ``x^2`` at ``x = 1`` with step size 0.01:
 
-	define generic_f(x) { return x^2; } diff(1, 0.01);
+```
+define generic_f(x) { return x^2; } diff(1, 0.01);
+```
 
 If you wish to do several operations with the same generic function, you do
 not need to redefine it again. Here is an example to compare the precision of
 Euler's integration algorithm to Simpson's:
 
-	define generic_f(x) { return x^2; } eul = integral(0, 1, 0.001);
-        sim = simpson(0, 1, 0.001);
-        print "Error:\n  Euler = ", 3*(1/3.0 - eul), " %\n  Simpson = ", 3*(1/3.0 - sim), " %\n";
+```
+define generic_f(x) { return x^2; } eul = integral(0, 1, 0.001);
+sim = simpson(0, 1, 0.001);
+print "Error:\n  Euler = ", 3*(1/3.0 - eul), " %\n  Simpson = ", 3*(1/3.0 - sim), " %\n";
+```
 
 * ``diff(x, dx)``: Derivative of ``generic_f`` at point ``x`` with numerical
 step size ``dx``.

@@ -34,16 +34,22 @@ define diffn(n, x, dx) {
    step size dx, using Euler's algorithm */
 define integral(a, b, dx) {
   auto x, integ;
+  if(b < a) return -integral(b, a, dx);
   for(x = a; x < b; x += dx)
     integ += generic_f(x)*dx;
   return integ;
 }
 
-/* Numerical integral of generic_f from a to b with 
+/* Numerical integral of generic_f from a to b with
    step size dx, using Simpson's algorithm */
 define simpson(a, b, dx) {
   auto x, integ;
-  for(x = a; x < b; x += dx)
-    integ += (dx/6.0)*(generic_f(x) + generic_f(x + dx) + 4*generic_f(x + 0.5*dx));
+  if(b < a) return -simpson(b, a, dx);
+  f = generic_f(x);
+  for(x = a; x < b; x += dx) {
+    fp = generic_f(x + dx);
+    integ += (dx/6.0)*(f + fp + 4*generic_f(x + 0.5*dx));
+    f = fp;
+  }
   return integ;
 }

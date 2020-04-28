@@ -9,7 +9,9 @@ logarithmic functions, so execute ``bc`` with the ``-l`` option. To add
 functions simply add them to the command line when you run ``bc``. For
 example,
 
-  bc -l trigonometry.bc exponential.bc
+```
+> bc -l trigonometry.bc exponential.bc
+```
 
 ### trigonometry.bc
 
@@ -53,9 +55,7 @@ Exponentials, logarithms, powers and hyperbolic functions.
 
 ### complex.bc
 
-Complex number arithmetic.
-
-Represent a complex number *a* + *b*i with an array,
+Complex number arithmetic. Represent a complex number *a* + *b*i with an array,
 
 ```
 z[0] = a; z[1] = b;

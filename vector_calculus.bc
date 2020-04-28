@@ -11,10 +11,10 @@
 /* Default generic function f(x) = x */
 define generic_f(x) { return x; }
 
-/* Numerical derivative of generic_f at point x with
-   step size dx */
+/* Numerical centred derivative of generic_f at point
+   x with step size dx */
 define diff(x, dx) {
-  return (generic_f(x + dx) - generic_f(x))/dx;
+  return (generic_f(x + 0.5*dx) - generic_f(x - 0.5*dx))/dx;
 }
 
 /* Numerical nth derivative of generic_f at point x
@@ -27,7 +27,7 @@ define diffn(n, x, dx) {
     print "Error: n must be a positive integer.\n";
     return 1/0;
    }
-   return (diffn(n - 1, x + dx, dx) - diffn(n - 1, x, dx))/dx;
+   return (diffn(n - 1, x + 0.5*dx, dx) - diffn(n - 1, x - 0.5*dx, dx))/dx;
 }
 
 /* Numerical integral of generic_f from a to b with
@@ -51,17 +51,19 @@ define simpson(a, b, dx) {
 /* Default generic dimensionality */
 generic_dim = 3;
 
-/* Partial derivatives */
+/* Numerical centered partial derivatives */
 define partial_diff(idx[], x[], dx) {
-  auto n, m, newx[], newidx[];
+  auto n, m, xp[], xm[], newidx[];
+  for(n = 0; n < generic_dim; n++) xp[n] = xm[n] = x[n];
   for(n = 0; n < generic_dim; n++) {
     if(idx[n] > 0) {
       for(m = 0; m < generic_dim; m++) {
           newidx[m] = idx[m];
       }
       . = newidx[n]--;
-      newx[n] = x[n] + dx;
-      return (partial_diff(newidx[], newx[], dx) - partial_diff(newidx[], x[], dx))/dx;
+      xp[n] += 0.5*dx;
+      xm[n] -= 0.5*dx;
+      return (partial_diff(newidx[], xp[], dx) - partial_diff(newidx[], xm[], dx))/dx;
     }
   }
   return generic_f(x[]);
@@ -71,40 +73,71 @@ define partial_diff(idx[], x[], dx) {
 define grad(x[], *gradf[], dx) {
   auto n;
   for(n = 0; n < generic_dim; n++) {
-    x[n] += dx;
-    gradv[n] = generic_f(x[]);
+    x[n] += 0.5*dx;
+    gradf[n] = generic_f(x[]);
     x[n] -= dx;
-    gradv[n] = generic_f(x[]));
-    gradv[n] /= dx;
+    gradf[n] -= generic_f(x[]);
+    gradf[n] /= dx;
   }
 }
 
 /* Divergence */
 define div(x[], dx) {
-  auto n, divf;
+  auto n, divf, divterm;
   divf = 0;
   for(n = 0; n < generic_dim; n++) {
+    divterm = 0;
     x[n] += 0.5*dx;
-    divf += generic_f(x[])/dx;
+    divterm += generic_f(x[]);
     x[n] -= dx;
-    divf -= generic_f(x[])/dx;
+    divterm -= generic_f(x[]);
+    x[n] += 0.5*dx;
+    divterm /= dx;
+    divf += divterm;
   }
   return divf;
 }
 
-/* Rotational */
+/* Rotational (assumes generic_f(x[], *f[]) of generic_dim = 3)*/
+define rot(x[], *rotf[], dx) {
+  auto i, xm[], xp[], ym[], yp[], zm[], zp[], fxm[], fxp[], fym[], fyp[], fzm[], fzp[];
 
-/* Laplacian */
+  for(i = 0; i < 3; i++) {
+    xm[i] = xp[i] = ym[i] = yp[i] = zm[i] = zp[i] = x[i];
+  }
+
+  xm[i] -= 0.5*dx; ym[i] -= 0.5*dx; zm[i] -= 0.5*dx;
+  xp[i] += 0.5*dx; yp[i] += 0.5*dx; zp[i] += 0.5*dx;
+
+  . = generic_f(xm[], fxm[]); . = generic_f(xp[], fxp[]);
+  . = generic_f(ym[], fym[]); . = generic_f(yp[], fyp[]);
+  . = generic_f(zm[], fzm[]); . = generic_f(zp[], fzp[]);
+
+  rotf[0] = ((fyp[2] - fym[2]) - (fzp[1] - fzm[1]))/dx;
+  rotf[1] = ((fzp[0] - fzm[0]) - (fxp[2] - fxm[2]))/dx;
+  rotf[2] = ((fxp[1] - fxm[1]) - (fyp[0] - fym[0]))/dx;
+}
+
+/* Laplacian (assumes generic_f(x[], *f[]) of generic_dim = 3) */
 define laplacian(x[], dx) {
-  auto n, delf;
+  auto n, f[], delterm, delf;
   delf = 0;
   for(n = 0; n < generic_dim; n++) {
     x[n] -= dx;
-    delf -= generic_f(x[])/dx^2;
+    . = generic_f(x[], f[])
+    delterm = -f[n];
     x[n] += 2*dx;
-    delf -= generic_f(x[])/dx^2;
+    . = generic_f(x[], f[])
+    delterm -= f[n];
     x[n] -= dx;
-    delf += 2*generic_f(x[])/dx^2;
+    . = generic_f(x[], f[])
+    delterm += 2*f[n];
+    delterm /= dx^2;
+    delf += delterm;
   }
   return delf;
 }
+
+/* Multi-dimensional numerical integration applying Simpson's rule */
+
+/* Arc length */

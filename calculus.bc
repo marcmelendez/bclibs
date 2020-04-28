@@ -8,13 +8,13 @@
   generic_f equal to the function of interest before
   calculating derivatives or integrals. */
 
-/* Default generic function f(x) = x */
-define generic_f(x) { return x; }
+/* Default generic function f(x) = 0 */
+define generic_f(x) { return 0; }
 
-/* Numerical derivative of generic_f at point x with
-   step size dx */
+/* Numerical centred derivative of generic_f at point
+   x with step size dx */
 define diff(x, dx) {
-  return (generic_f(x + dx) - generic_f(x))/dx;
+  return (generic_f(x + 0.5*dx) - generic_f(x - 0.5*dx))/dx;
 }
 
 /* Numerical nth derivative of generic_f at point x
@@ -27,7 +27,7 @@ define diffn(n, x, dx) {
     print "Error: n must be a positive integer.\n";
     return 1/0;
    }
-   return (diffn(n - 1, x + dx, dx) - diffn(n - 1, x, dx))/dx;
+   return (diffn(n - 1, x + 0.5*dx, dx) - diffn(n - 1, x - 0.5*dx, dx))/dx;
 }
 
 /* Numerical integral of generic_f from a to b with

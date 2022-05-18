@@ -7,7 +7,7 @@ define csc(x) { return 1/s(x); }
 define cot(x) { return c(x)/s(x); }
 
 define asin(x) { return a(x/sqrt(1 - x^2)); }
-define acos(x) { return a(sqrt(1 - x^2)/a); }
+define acos(x) { return a(sqrt(1 - x^2)/x); }
 define atan(x) { return a(x); }
 define atan2(x, y) {
   auto pi = 4*a(1);
